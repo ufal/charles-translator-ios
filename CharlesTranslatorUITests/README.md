@@ -1,0 +1,1 @@
+Intentionally empty for Phase 1/1.1/1.2 — see the "Testing" section of the implementation plan. UI automation is deferred until the screen set stabilizes in Phase 2, to avoid maintaining brittle tests against a still-changing UI.

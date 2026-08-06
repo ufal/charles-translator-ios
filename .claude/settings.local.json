@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:lindat.mff.cuni.cz)",
+      "Bash(curl *)",
+      "Bash(xargs -I{} sh -c 'echo \"--- {} ---\"; cat \"{}\"')",
+      "Bash(xcodebuild -version)",
+      "Bash(xcrun --sdk iphoneos --show-sdk-version)",
+      "Bash(swift --version)",
+      "Bash(brew --version)"
+    ]
+  }
+}
