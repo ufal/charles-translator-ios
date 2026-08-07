@@ -1,0 +1,39 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "extended-gray:1.00000,1.00000",
+      "extended-gray:0.75000,1.00000"
+    ]
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "Charles_Translator_icon_CUNI.svg",
+          "name" : "Charles_Translator_icon_CUNI",
+          "position" : {
+            "scale" : 2,
+            "translation-in-points" : [
+              -24.9136208982261,
+              1.1368683772161603e-13
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.6
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

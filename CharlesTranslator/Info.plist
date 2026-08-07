@@ -20,6 +20,8 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Charles Translator uses the microphone to let you speak instead of type.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
