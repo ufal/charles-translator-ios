@@ -47,6 +47,9 @@ targets:
     deploymentTarget: "26.0"
     sources:
       - path: CharlesTranslatorTests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: CharlesTranslator
 

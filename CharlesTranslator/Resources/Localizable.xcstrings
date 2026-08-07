@@ -1,7 +1,58 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@/%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@/%2$@"
+          }
+        }
+      }
+    },
+    "Agree" : {
 
+    },
+    "Data processing" : {
+
+    },
+    "Disagree" : {
+
+    },
+    "Enter text" : {
+
+    },
+    "Erase app data" : {
+
+    },
+    "I am giving the Institute of Formal and Applied Linguistics, Faculty of Mathematics and Physics, Charles University (UFAL MFF UK) consent to collect my inputs and translations. The texts will be anonymized and may be used for future development of the system." : {
+
+    },
+    "Identification" : {
+
+    },
+    "If your organization has an agreement with us to track its traffic, provide its name here." : {
+
+    },
+    "Privacy" : {
+
+    },
+    "Start voice input" : {
+
+    },
+    "Stop listening" : {
+
+    },
+    "Swap languages" : {
+
+    },
+    "This deletes your saved history and resets your privacy choices. This can't be undone." : {
+
+    },
+    "You can change this decision anytime in Settings." : {
+
+    }
   },
   "version" : "1.0"
 }
