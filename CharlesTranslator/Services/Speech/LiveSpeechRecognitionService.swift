@@ -43,9 +43,24 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         }
         self.recognizer = recognizer
 
+        // The recognitionTask result handler installed below is @MainActor-isolated
+        // (this type is @MainActor). SFSpeechRecognizer otherwise delivers those
+        // callbacks on a private serial queue, which would trip the same Swift 6
+        // executor-isolation assertion as the authorization handler above. Pin the
+        // callback queue to the main queue; `underlyingQueue = .main` guarantees the
+        // handler runs with the main dispatch queue as current, satisfying the
+        // main-actor executor check.
+        let callbackQueue = OperationQueue()
+        callbackQueue.underlyingQueue = .main
+        recognizer.queue = callbackQueue
+
         try await activateAudioSession()
 
-        let request = SFSpeechAudioBufferRecognitionRequest()
+        // Captured by the real-time audio tap block below, which is @Sendable and
+        // non-isolated. SFSpeechAudioBufferRecognitionRequest is designed to receive
+        // buffers appended from the tap thread, so opting this binding out of
+        // concurrency checking with nonisolated(unsafe) is safe here.
+        nonisolated(unsafe) let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         request.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
         self.request = request
@@ -67,7 +82,12 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         guard let recordingFormat = await validRecordingFormat(for: inputNode) else {
             throw SpeechRecognitionError.recognizerUnavailable
         }
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+        // AVAudioEngine invokes this tap block on its real-time audio thread, never
+        // the main thread. This type is @MainActor, so a plain block would inherit
+        // main-actor isolation and trip the Swift 6 executor-isolation assertion the
+        // moment audio starts flowing. Mark it @Sendable to keep it non-isolated; it
+        // must not hop to the main actor, which would be fatal for real-time audio.
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { @Sendable buffer, _ in
             request.append(buffer)
         }
 
@@ -183,7 +203,14 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         guard micGranted else { throw SpeechRecognitionError.permissionDenied }
 
         let speechStatus = await withCheckedContinuation { (continuation: CheckedContinuation<SFSpeechRecognizerAuthorizationStatus, Never>) in
-            SFSpeechRecognizer.requestAuthorization { status in
+            // Apple documents that this handler is NOT guaranteed to run on the
+            // main dispatch queue. Because this type is @MainActor, a plain
+            // (non-Sendable) handler would inherit main-actor isolation and, when
+            // the system invokes it on a background queue, trip a fatal Swift 6
+            // executor-isolation assertion (dispatch_assert_queue → SIGTRAP).
+            // Marking it @Sendable makes the handler non-isolated; resuming a
+            // CheckedContinuation is safe from any thread.
+            SFSpeechRecognizer.requestAuthorization { @Sendable status in
                 continuation.resume(returning: status)
             }
         }
