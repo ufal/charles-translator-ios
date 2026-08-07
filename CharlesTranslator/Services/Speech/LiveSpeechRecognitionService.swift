@@ -137,16 +137,32 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
     /// watchdog termination. This class is otherwise `@MainActor` (it needs to
     /// be, for the UI-facing parts), so activation/deactivation are the two
     /// spots that must explicitly hop off it.
+    ///
+    /// Uses one dedicated, stable serial queue rather than `Task.detached`
+    /// (Swift's anonymous shared concurrent thread pool) — a `dispatch_assert_
+    /// queue` crash was observed with the detached-task version, consistent
+    /// with AVFoundation's audio-session internals expecting session control
+    /// calls to serialize through the same identifiable queue every time
+    /// rather than an arbitrary pool thread that can differ call to call.
+    private static let audioSessionQueue = DispatchQueue(label: "cz.cuni.mff.ufal.translator.audioSession", qos: .userInitiated)
+
     private func activateAudioSession() async throws {
-        try await Task.detached(priority: .userInitiated) {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        }.value
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            Self.audioSessionQueue.async {
+                do {
+                    let audioSession = AVAudioSession.sharedInstance()
+                    try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+                    try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
     }
 
     private func deactivateAudioSession() {
-        Task.detached(priority: .utility) {
+        Self.audioSessionQueue.async {
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
     }
