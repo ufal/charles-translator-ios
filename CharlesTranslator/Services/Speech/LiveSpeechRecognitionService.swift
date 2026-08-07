@@ -41,9 +41,23 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         request.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
         self.request = request
 
+        // Reset stale state from a previous start/stop cycle before reconfiguring —
+        // starting a fresh AVAudioEngine session on top of leftover taps/format
+        // state is a common source of crashes across repeated mic toggles.
+        audioEngine.stop()
+        audioEngine.reset()
         let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
         inputNode.removeTap(onBus: 0)
+
+        // On a real device, the input node can briefly report an invalid (zero
+        // sample rate / channel count) format in the moment right after mic/speech
+        // permission is freshly granted, before the audio route has settled.
+        // Installing a tap with that format is a fatal Objective-C precondition
+        // failure inside AVAudioEngine — NOT a catchable Swift error — so retry
+        // briefly for a valid format instead of crashing the app.
+        guard let recordingFormat = await validRecordingFormat(for: inputNode) else {
+            throw SpeechRecognitionError.recognizerUnavailable
+        }
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
             request.append(buffer)
         }
@@ -106,6 +120,17 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         task = nil
         request = nil
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    private func validRecordingFormat(for inputNode: AVAudioInputNode) async -> AVAudioFormat? {
+        for _ in 0..<10 {
+            let format = inputNode.outputFormat(forBus: 0)
+            if format.sampleRate > 0, format.channelCount > 0 {
+                return format
+            }
+            try? await Task.sleep(for: .milliseconds(50))
+        }
+        return nil
     }
 
     private func requestPermissionsIfNeeded() async throws {
