@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import SwiftData
 
 struct TranslateView: View {
     @Environment(AppEnvironment.self) private var appEnvironment
@@ -38,6 +39,9 @@ struct TranslateView: View {
             if viewModel.historyStore == nil {
                 viewModel.historyStore = SwiftDataHistoryStore(modelContext: modelContext)
             }
+        }
+        .onDisappear {
+            viewModel.stopListeningIfNeeded()
         }
         .onChange(of: appEnvironment.pendingTranslateReload) { _, item in
             guard let item else { return }
