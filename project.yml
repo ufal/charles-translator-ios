@@ -41,6 +41,8 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         DEVELOPMENT_ASSET_PATHS: ""
+        DEVELOPMENT_TEAM: 8YW3ZU8MFU
+        CODE_SIGN_IDENTITY: "iPhone Developer"
 
   CharlesTranslatorTests:
     type: bundle.unit-test
