@@ -30,6 +30,7 @@ targets:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         NSMicrophoneUsageDescription: "Charles Translator uses the microphone to let you speak instead of type."
