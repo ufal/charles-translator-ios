@@ -184,4 +184,11 @@ final class TranslateViewModel {
     func speakOutput() {
         textToSpeechService.speak(outputText, language: targetLanguage)
     }
+
+    /// Called when the Translate screen disappears (tab switch, etc.) so a
+    /// still-active mic session doesn't keep running in the background.
+    func stopListeningIfNeeded() {
+        guard isListening else { return }
+        speechRecognitionService.stopListening()
+    }
 }

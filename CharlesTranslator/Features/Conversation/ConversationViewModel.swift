@@ -115,4 +115,11 @@ final class ConversationViewModel {
             bubbles[index].translatedText = result.joinedText
         }
     }
+
+    /// Called when the Conversation screen disappears (tab switch, etc.) so a
+    /// still-active mic session doesn't keep running in the background.
+    func stopListeningIfNeeded() {
+        guard activeSide != nil else { return }
+        speechRecognitionService.stopListening()
+    }
 }

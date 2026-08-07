@@ -13,7 +13,6 @@ enum AppTab: Hashable {
 @Observable
 final class AppEnvironment {
     let translationAPIClient: TranslationAPIClient
-    let speechRecognitionService: SpeechRecognitionService
     let textToSpeechService: TextToSpeechService
     let consentStore: ConsentStore
 
@@ -31,23 +30,23 @@ final class AppEnvironment {
 
     init(
         translationAPIClient: TranslationAPIClient = LiveTranslationAPIClient(),
-        speechRecognitionService: SpeechRecognitionService = LiveSpeechRecognitionService(),
+        translateSpeechRecognitionService: SpeechRecognitionService = LiveSpeechRecognitionService(),
+        conversationSpeechRecognitionService: SpeechRecognitionService = LiveSpeechRecognitionService(),
         textToSpeechService: TextToSpeechService = LiveTextToSpeechService(),
         consentStore: ConsentStore = ConsentStore()
     ) {
         self.translationAPIClient = translationAPIClient
-        self.speechRecognitionService = speechRecognitionService
         self.textToSpeechService = textToSpeechService
         self.consentStore = consentStore
         self.translateViewModel = TranslateViewModel(
             translationAPIClient: translationAPIClient,
-            speechRecognitionService: speechRecognitionService,
+            speechRecognitionService: translateSpeechRecognitionService,
             textToSpeechService: textToSpeechService,
             consentStore: consentStore
         )
         self.conversationViewModel = ConversationViewModel(
             translationAPIClient: translationAPIClient,
-            speechRecognitionService: speechRecognitionService,
+            speechRecognitionService: conversationSpeechRecognitionService,
             consentStore: consentStore
         )
     }

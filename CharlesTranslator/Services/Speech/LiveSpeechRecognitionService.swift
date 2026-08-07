@@ -23,6 +23,17 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         locale: Language,
         onPartialTranscript: @escaping (String) -> Void
     ) async throws -> String {
+        // Guard against re-entrant use on this instance: if a previous session
+        // hasn't finished, end it cleanly first rather than reconfiguring a
+        // still-active AVAudioEngine graph out from under it — mutating a live
+        // engine/tap from another logical session is exactly the kind of race
+        // that crashes on a background audio thread instead of throwing a
+        // catchable Swift error.
+        if continuation != nil {
+            stopListening()
+            finish(throwing: CancellationError())
+        }
+
         try await requestPermissionsIfNeeded()
 
         guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: locale.bcp47Locale)),

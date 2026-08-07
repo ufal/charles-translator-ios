@@ -48,6 +48,9 @@ struct ConversationView: View {
                     .disabled(viewModel.bubbles.isEmpty)
             }
         }
+        .onDisappear {
+            viewModel.stopListeningIfNeeded()
+        }
     }
 
     private var actionsRow: some View {
