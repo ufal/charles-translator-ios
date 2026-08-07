@@ -8,6 +8,7 @@ struct TranslateView: View {
     @State private var isPickingSource = false
     @State private var isPickingTarget = false
     @State private var didCopy = false
+    @FocusState private var isInputFocused: Bool
 
     private var viewModel: TranslateViewModel { appEnvironment.translateViewModel }
 
@@ -23,9 +24,16 @@ struct TranslateView: View {
                 }
                 .padding()
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .navigationTitle("Charles Translator")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isInputFocused = false }
+            }
+        }
         .task {
             if viewModel.historyStore == nil {
                 viewModel.historyStore = SwiftDataHistoryStore(modelContext: modelContext)
@@ -78,6 +86,7 @@ struct TranslateView: View {
                     get: { viewModel.inputText },
                     set: { viewModel.setInputText($0, inputType: .keyboard) }
                 ))
+                .focused($isInputFocused)
                 .scrollContentBackground(.hidden)
                 .frame(minHeight: 120)
             }
