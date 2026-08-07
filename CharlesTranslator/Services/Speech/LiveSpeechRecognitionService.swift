@@ -43,9 +43,7 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         }
         self.recognizer = recognizer
 
-        let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        try await activateAudioSession()
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
@@ -130,7 +128,27 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         task?.cancel()
         task = nil
         request = nil
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        deactivateAudioSession()
+    }
+
+    /// `AVAudioSession.setActive` is documented by Apple as a call that must
+    /// never happen on the main thread — it can block for a noticeable amount
+    /// of time, and doing so on the main actor risks a UI hang and eventual
+    /// watchdog termination. This class is otherwise `@MainActor` (it needs to
+    /// be, for the UI-facing parts), so activation/deactivation are the two
+    /// spots that must explicitly hop off it.
+    private func activateAudioSession() async throws {
+        try await Task.detached(priority: .userInitiated) {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        }.value
+    }
+
+    private func deactivateAudioSession() {
+        Task.detached(priority: .utility) {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        }
     }
 
     private func validRecordingFormat(for inputNode: AVAudioInputNode) async -> AVAudioFormat? {
