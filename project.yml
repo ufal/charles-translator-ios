@@ -53,6 +53,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+        DEVELOPMENT_TEAM: 8YW3ZU8MFU
     dependencies:
       - target: CharlesTranslator
 
