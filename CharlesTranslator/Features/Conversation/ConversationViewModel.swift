@@ -45,12 +45,17 @@ final class ConversationViewModel {
     }
 
     func toggleMic(_ side: BubblePosition) async {
+        // Tapping the currently-listening side again stops it.
         if activeSide == side {
             speechRecognitionService.stopListening()
             return
         }
-        guard activeSide == nil else { return }
 
+        // Tapping the other side while one is listening switches sides directly,
+        // with no explicit stop first. Claim activeSide now so this invocation is
+        // the owner: startListening's re-entrancy guard cancels the in-flight
+        // session, whose toggleMic then sees it is no longer the active side and
+        // leaves ours in place (see the guarded clear at the end).
         activeSide = side
         errorMessage = nil
 
@@ -77,7 +82,7 @@ final class ConversationViewModel {
             updateBubbleText(bubbleID, originalText: finalText)
             scheduleTranslate(bubbleID: bubbleID, text: finalText, source: spokenLanguage, target: targetLanguage)
         } catch is CancellationError {
-            // stopped intentionally
+            // Superseded by a switch to the other side, or an explicit stop.
         } catch SpeechRecognitionError.permissionDenied {
             errorMessage = String(
                 localized: "error.speechPermissionDenied",
@@ -90,12 +95,25 @@ final class ConversationViewModel {
             )
         }
 
-        activeSide = nil
+        // Drop a bubble that never captured any speech (e.g. an immediate switch away).
+        removeBubbleIfEmpty(bubbleID)
+
+        // Only relinquish the active side if a later switch hasn't already taken over.
+        if activeSide == side {
+            activeSide = nil
+        }
     }
 
     private func updateBubbleText(_ id: UUID, originalText: String) {
         guard let index = bubbles.firstIndex(where: { $0.id == id }) else { return }
         bubbles[index].originalText = originalText
+    }
+
+    private func removeBubbleIfEmpty(_ id: UUID) {
+        guard let index = bubbles.firstIndex(where: { $0.id == id }),
+              bubbles[index].originalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return }
+        bubbles.remove(at: index)
     }
 
     private func scheduleTranslate(bubbleID: UUID, text: String, source: Language, target: Language) {

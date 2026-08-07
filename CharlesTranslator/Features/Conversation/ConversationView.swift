@@ -59,7 +59,6 @@ struct ConversationView: View {
                 MicButton(isListening: viewModel.activeSide == .left) {
                     Task { await viewModel.toggleMic(.left) }
                 }
-                .disabled(viewModel.activeSide == .right)
                 Text(viewModel.leftLanguage.displayName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -71,7 +70,6 @@ struct ConversationView: View {
                 MicButton(isListening: viewModel.activeSide == .right) {
                     Task { await viewModel.toggleMic(.right) }
                 }
-                .disabled(viewModel.activeSide == .left)
 
                 Menu {
                     ForEach(LanguagePairCatalog.conversationTargetLanguages) { language in
