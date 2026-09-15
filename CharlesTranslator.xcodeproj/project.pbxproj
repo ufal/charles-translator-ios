@@ -82,8 +82,8 @@
 		9549BA85E09D777108CEDB36 /* ConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationView.swift; sourceTree = "<group>"; };
 		9CC8D329FA728D18D025D907 /* MicButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicButton.swift; sourceTree = "<group>"; };
 		9EE68FA726D9318F22B189FC /* ConsentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentStore.swift; sourceTree = "<group>"; };
-		A1B2C3D40001PRIVACYMANIF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A145BC8045A18AE33D60B9D3 /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		A1B2C3D40001PRIVACYMANIF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ADDBA1585C2D4D373930158D /* ConsentStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentStoreTests.swift; sourceTree = "<group>"; };
 		C31501573918DB360CB2E8AF /* TranslationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationRequest.swift; sourceTree = "<group>"; };
 		CD1F03BBB4FB76BF6B87DA22 /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
