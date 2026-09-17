@@ -21,6 +21,8 @@ final class MockSpeechRecognitionService: SpeechRecognitionService {
         ""
     }
     func stopListening() {}
+    func supportsRecognition(for locale: Language) -> Bool { true }
+    func supportsOnDeviceRecognition(for locale: Language) -> Bool { false }
 }
 
 @MainActor
@@ -32,4 +34,6 @@ final class MockTextToSpeechService: TextToSpeechService {
         lastSpokenText = text
     }
     func stop() {}
+    func hasVoice(for locale: Language) -> Bool { true }
+    func supportsOnDeviceVoice(for locale: Language) -> Bool { false }
 }

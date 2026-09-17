@@ -15,6 +15,7 @@ final class AppEnvironment {
     let translationAPIClient: TranslationAPIClient
     let textToSpeechService: TextToSpeechService
     let consentStore: ConsentStore
+    let offlineSpeechStatusStore: OfflineSpeechStatusStore
 
     /// Owned here (rather than created fresh per-appearance in the view) so
     /// in-progress text and results survive switching tabs.
@@ -38,6 +39,10 @@ final class AppEnvironment {
         self.translationAPIClient = translationAPIClient
         self.textToSpeechService = textToSpeechService
         self.consentStore = consentStore
+        self.offlineSpeechStatusStore = OfflineSpeechStatusStore(
+            recognition: translateSpeechRecognitionService,
+            textToSpeech: textToSpeechService
+        )
         self.translateViewModel = TranslateViewModel(
             translationAPIClient: translationAPIClient,
             speechRecognitionService: translateSpeechRecognitionService,

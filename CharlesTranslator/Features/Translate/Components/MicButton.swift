@@ -6,6 +6,7 @@ import SwiftUI
 /// waveform is a named Phase 2 enhancement, not needed to convey "listening".
 struct MicButton: View {
     let isListening: Bool
+    var showsOnDeviceIndicator: Bool = false
     let action: () -> Void
 
     @State private var isPulsing = false
@@ -21,6 +22,18 @@ struct MicButton: View {
                 Image(systemName: isListening ? "mic.fill" : "mic")
                     .font(.system(size: 22, weight: .medium))
                     .foregroundStyle(isListening ? .white : .primary)
+            }
+            // The on-device dot is overlaid on the *whole* 56pt circle (not a
+            // ZStack child) so the mic stays centered — using `.bottomTrailing`
+            // alignment here doesn't disturb the mic's centering.
+            .overlay(alignment: .bottomTrailing) {
+                if showsOnDeviceIndicator {
+                    Circle()
+                        .fill(Color.charlesBlue)
+                        .frame(width: 14, height: 14)
+                        .overlay(Circle().stroke(.white, lineWidth: 2))
+                        .padding(4)
+                }
             }
         }
         .buttonStyle(.plain)

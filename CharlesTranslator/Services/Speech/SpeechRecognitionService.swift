@@ -17,4 +17,16 @@ protocol SpeechRecognitionService: AnyObject {
     ) async throws -> String
 
     func stopListening()
+
+    /// Whether Apple supports speech recognition for the given source language
+    /// at all — server-based or on-device. Drives whether the mic affordance is
+    /// shown at all, independent of transient availability or whether the
+    /// on-device model is downloaded.
+    func supportsRecognition(for locale: Language) -> Bool
+
+    /// Whether the on-device dictation model for the given source language is
+    /// downloaded, i.e. recognition can run offline. Drives the on-device
+    /// indicator on the mic affordance. (`SFSpeechRecognizer` has no public
+    /// "is downloaded" flag; `supportsOnDeviceRecognition` is the standard proxy.)
+    func supportsOnDeviceRecognition(for locale: Language) -> Bool
 }

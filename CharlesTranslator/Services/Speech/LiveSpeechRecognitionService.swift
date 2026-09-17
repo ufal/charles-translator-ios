@@ -124,6 +124,17 @@ final class LiveSpeechRecognitionService: SpeechRecognitionService {
         request?.endAudio()
     }
 
+    func supportsRecognition(for locale: Language) -> Bool {
+        SFSpeechRecognizer(locale: Locale(identifier: locale.bcp47Locale)) != nil
+    }
+
+    func supportsOnDeviceRecognition(for locale: Language) -> Bool {
+        guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: locale.bcp47Locale)) else {
+            return false
+        }
+        return recognizer.supportsOnDeviceRecognition
+    }
+
     private func finish(returning text: String) {
         guard !hasFinished else { return }
         hasFinished = true

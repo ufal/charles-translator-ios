@@ -23,6 +23,8 @@ final class TranslateViewModel {
 
     private var translateTask: Task<Void, Never>?
     private var saveTask: Task<Void, Never>?
+    private var lastTranslationError: TranslationError?
+    private var lastInputType: TranslationInputMethod = .keyboard
 
     var reachableTargetLanguages: [Language] {
         LanguagePairCatalog.reachableTargets(from: sourceLanguage)
@@ -32,8 +34,30 @@ final class TranslateViewModel {
         inputText.count > Self.maxCharacters
     }
 
+    /// True when the current error is a transient network failure — the one
+    /// case where a retry is meaningful. Other errors (too long, unsupported
+    /// pair, decoding) won't succeed on a retry, so no action is offered.
+    var canRetryTranslation: Bool {
+        guard case .network = lastTranslationError else { return false }
+        return true
+    }
+
     var canSpeakOutput: Bool {
         !outputText.isEmpty
+    }
+
+    /// Whether Apple supports voice input for the current source language at
+    /// all (server-based or on-device). Drives whether the mic button is shown —
+    /// always shown for supported languages, independent of transient
+    /// availability or whether the on-device model is downloaded.
+    var isSpeechRecognitionSupported: Bool {
+        speechRecognitionService.supportsRecognition(for: sourceLanguage)
+    }
+
+    /// Whether the source language's dictation model is on-device (works
+    /// offline). Drives the blue on-device dot on the mic button.
+    var isSpeechRecognitionOnDevice: Bool {
+        speechRecognitionService.supportsOnDeviceRecognition(for: sourceLanguage)
     }
 
     init(
@@ -91,6 +115,8 @@ final class TranslateViewModel {
     private func scheduleTranslate(inputType: TranslationInputMethod) {
         translateTask?.cancel()
         errorMessage = nil
+        lastTranslationError = nil
+        lastInputType = inputType
 
         let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
@@ -131,10 +157,22 @@ final class TranslateViewModel {
         } catch is CancellationError {
             // Superseded by a newer request — not a user-facing error.
         } catch let error as TranslationError {
+            lastTranslationError = error
             errorMessage = error.userMessage
         } catch {
+            lastTranslationError = .unknown(statusCode: -1)
             errorMessage = TranslationError.unknown(statusCode: -1).userMessage
         }
+    }
+
+    /// Re-runs the current translation immediately, bypassing the debounce.
+    /// Shown as "Try Again" only when `canRetryTranslation` is true (a transient
+    /// network failure), so it re-attempts the exact same request rather than a
+    /// fresh one.
+    func retryTranslation() {
+        guard canRetryTranslation else { return }
+        let inputType = lastInputType
+        Task { await performTranslate(inputType: inputType) }
     }
 
     private func scheduleSave() {

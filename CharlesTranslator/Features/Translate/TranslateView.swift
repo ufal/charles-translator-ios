@@ -72,8 +72,9 @@ struct TranslateView: View {
             LanguagePillView(language: viewModel.sourceLanguage) { isPickingSource = true }
             SwapButton { viewModel.swapLanguages() }
             LanguagePillView(language: viewModel.targetLanguage) { isPickingTarget = true }
-            Spacer()
         }
+        // Center the source ⇄ target pair under the centered inline title.
+        .frame(maxWidth: .infinity)
         .padding()
     }
 
@@ -102,15 +103,30 @@ struct TranslateView: View {
                         .foregroundStyle(.red)
                 }
                 Spacer()
-                MicButton(isListening: viewModel.isListening) {
-                    Task { await viewModel.toggleMic() }
+                if viewModel.isSpeechRecognitionSupported {
+                    MicButton(
+                        isListening: viewModel.isListening,
+                        showsOnDeviceIndicator: viewModel.isSpeechRecognitionOnDevice,
+                        action: {
+                            Task { await viewModel.toggleMic() }
+                        }
+                    )
                 }
             }
 
             if let errorMessage = viewModel.errorMessage {
-                Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
-                    .font(.footnote)
-                    .foregroundStyle(.red)
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+
+                    if viewModel.canRetryTranslation {
+                        Button("Try Again") {
+                            viewModel.retryTranslation()
+                        }
+                        .font(.footnote.weight(.semibold))
+                    }
+                }
             }
         }
     }

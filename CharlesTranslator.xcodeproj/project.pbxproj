@@ -21,6 +21,7 @@
 		6BB8F42166F06C45B9AB0F7D /* TranslationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C31501573918DB360CB2E8AF /* TranslationRequest.swift */; };
 		833224E79ED800752EC427EA /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D08D5E70F177CB7E31AA121 /* Mocks.swift */; };
 		8DEC6C13A76AAE3E5286D13F /* TextToSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C96B6225233E62FBFAC92 /* TextToSpeechService.swift */; };
+		B1C2D3E4F5061728394A5B6C /* OfflineSpeechStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* OfflineSpeechStatus.swift */; };
 		8E004126978934B20770C2FA /* LiveTranslationAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38B2113192322382354079F /* LiveTranslationAPIClient.swift */; };
 		91FA6A4F1A5D568F13077E7D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F51648D7003FF29335C2B9D7 /* Assets.xcassets */; };
 		9272118CC00706901DF4EE94 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2735C15E8F5AA37DD42F44 /* RootView.swift */; };
@@ -93,6 +94,7 @@
 		E38B2113192322382354079F /* LiveTranslationAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTranslationAPIClient.swift; sourceTree = "<group>"; };
 		EFF829C304D7E3AE3E7EFCCF /* CharlesTranslatorTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CharlesTranslatorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0F18D9D51196CD222EEC18E /* SpeechRecognitionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionService.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* OfflineSpeechStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineSpeechStatus.swift; sourceTree = "<group>"; };
 		F51648D7003FF29335C2B9D7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F682F15F24A916E449AFEBC0 /* TranslationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationError.swift; sourceTree = "<group>"; };
 		F71A03736AC10A8493B95D3B /* ConversationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationModels.swift; sourceTree = "<group>"; };
@@ -292,6 +294,7 @@
 			isa = PBXGroup;
 			children = (
 				87BC4F729EADE8FF22F5979C /* LiveSpeechRecognitionService.swift */,
+				A1B2C3D4E5F60718293A4B5C /* OfflineSpeechStatus.swift */,
 				F0F18D9D51196CD222EEC18E /* SpeechRecognitionService.swift */,
 				5E3C96B6225233E62FBFAC92 /* TextToSpeechService.swift */,
 			);
@@ -432,6 +435,7 @@
 				9272118CC00706901DF4EE94 /* RootView.swift in Sources */,
 				ACF7B7D43922B77F20E5E770 /* SettingsView.swift in Sources */,
 				4565D5741427F001D24C014B /* SpeechRecognitionService.swift in Sources */,
+				B1C2D3E4F5061728394A5B6C /* OfflineSpeechStatus.swift in Sources */,
 				8DEC6C13A76AAE3E5286D13F /* TextToSpeechService.swift in Sources */,
 				6440AD27F96D67BEEBF048CC /* TranslateView.swift in Sources */,
 				97537606FC1E1D5B403DE1AE /* TranslateViewModel.swift in Sources */,
